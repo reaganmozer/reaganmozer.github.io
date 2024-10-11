@@ -6,11 +6,19 @@ author_profile: true
 ---
 
 ## Working papers / pre-prints
-* **Mozer, R.** & Miratrix, L. Decreasing the human coding burden in randomized trials with text-based outcomes via model-assisted impact analysis. [arXiv preprint arXiv:2309.13666](https://arxiv.org/abs/2309.13666)
 
 * **Mozer, R.**, Kaufman, A. R., Celi, L. A., & Miratrix, L. Leveraging text data for causal inference using electronic health records. [arXiv preprint arXiv:2307.03687](https://arxiv.org/abs/2307.03687)
 
+* Kim, Y., **Mozer, R.**, Miratrix, L., and Al-Adeimi, S. ChatGPT vs. Linear Regression: Assessing the Efficacy and Accuracy of Large Language Models for Automated Essay Scoring. *Working paper*
+
+* Guo, G., Branson, Z., and **Mozer, R.** Doubly robust causal inference with text-based confounding: An application to gender disparities in online forums. *Working paper*
+
 ## Publications
+
+* Rupcic S, Tam MZ, DeLaughter KL, Gifford AL, Barker AM, Bokhour BG, Xu C, Dryden E, Anderson E, Jasuja GK, Boudreau J, Douglas JH, Hyde J, **Mozer R.**, Zeliadt SB, Fix GM. (In press) Co-Designing a Blueprint for Spreading Person-Centered, Whole Health Care to HIV Specialty Care Settings: A Mixed Methods Protocol. *BMC Health Services Research*
+
+* **Mozer, R.** & Miratrix, L. (In press). More power to you: Using machine learning to augment human coding for more efficient inference in text-based randomized trials. *Annals of Applied Statistics*
+
 * **Mozer, R.**, Miratrix, L., Relyea, J. E., and Kim, J. S. (2023). [Combining human and automated scoring methods in experimental assessments of writing: A case study tutorial.](https://journals.sagepub.com/doi/full/10.3102/10769986231207886) *Journal of Educational and Behavioral Statistics*<br>
 	&nbsp;&nbsp;&nbsp;&nbsp; <img src="../images/github-mark.png" width="20" height="15"> [[Replication]](https://github.com/reaganmozer/reads-replication) &nbsp;&nbsp;&nbsp;&nbsp; <img src="../images/data.png" width="21" height="20"> [[Data]](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/J9KSHU)  
 
