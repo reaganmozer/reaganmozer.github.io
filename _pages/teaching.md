@@ -7,6 +7,7 @@ author_profile: true
 
 ### Bentley University (*Instructor*)
 * HNR445: Honors Capstone 
+* MA250: Data Visualization
 * MA252: Regression Analysis
 * MA255: Design of Experiments
 * MA706: Design of Experiments for Business
