@@ -26,7 +26,7 @@ author_profile: true
 
 ## Teaching Demos
 
-* [Experiment-Wise Error Rate (MA255)](/apps/ewer-app/) - Interactive Shinylive app for exploring how the probability of a Type I error increases with the number of hypothesis tests, and how correction methods (Bonferroni, Holm, Benjamini-Hochberg, Tukey, Scheffe) help control it.
+* [Experiment-Wise Error Rate (MA255)](/apps/ewer-app/?coi=1) - Interactive Shinylive app for exploring how the probability of a Type I error increases with the number of hypothesis tests, and how correction methods (Bonferroni, Holm, Benjamini-Hochberg, Tukey, Scheffe) help control it.
 
 ## Honors & Distinctions
 * I received the **2021 Gregory J. Hall Advisor of the Year Award**, Bentley University Honors Program 
