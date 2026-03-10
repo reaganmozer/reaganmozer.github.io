@@ -6,11 +6,11 @@ author_profile: true
 ---
 
 ### Bentley University (*Instructor*)
-* HNR445: Honors Capstone 
-* MA250: Data Visualization
-* MA252: Regression Analysis
-* MA255: Design of Experiments
-* MA706: Design of Experiments for Business
+* HNR445: Honors Capstone
+* MA250: Data Visualization [[syllabus]](/files/MA250_Spring2026_Syllabus.pdf)
+* MA252: Regression Analysis [[syllabus]](/files/MA252_Fa21_Syllabus.pdf)
+* MA255: Design of Experiments [[syllabus]](/files/MA255_Spring26_Syllabus.pdf)
+* MA706: Design of Experiments for Business [[syllabus]](/files/MA706_Spring25_Syllabus.pdf)
 * ST700: Directed Study in Statistics
 
 
@@ -23,6 +23,10 @@ author_profile: true
 * STAT211: Statistical Inference
 * STAT286: Causal Inference and Program Evaluation
 * STAT303: The Art and Practice of Teaching Statistics
+
+## Teaching Demos
+
+* [Experiment-Wise Error Rate (MA255)](/apps/ewer-app/) - Interactive Shinylive app for exploring how the probability of a Type I error increases with the number of hypothesis tests, and how correction methods (Bonferroni, Holm, Benjamini-Hochberg, Tukey, Scheffe) help control it.
 
 ## Honors & Distinctions
 * I received the **2021 Gregory J. Hall Advisor of the Year Award**, Bentley University Honors Program 

@@ -7,19 +7,27 @@ author_profile: true
 
 ## Working papers / pre-prints
 
-* **Mozer, R.**, Kaufman, A. R., Celi, L. A., & Miratrix, L. Leveraging text data for causal inference using electronic health records. [arXiv preprint arXiv:2307.03687](https://arxiv.org/abs/2307.03687)
-
-* Kim, Y., **Mozer, R.**, Miratrix, L., and Al-Adeimi, S. ChatGPT vs. Linear Regression: Assessing the Efficacy and Accuracy of Large Language Models for Automated Essay Scoring. *Working paper*
+* Bavli, H. J. and **Mozer, R.** The Evidence on Character Evidence in Jury Trials: Findings from a Randomized Controlled Trial. *Working paper*
 
 * Guo, G., Branson, Z., and **Mozer, R.** Doubly robust causal inference with text-based confounding: An application to gender disparities in online forums. *Working paper*
 
+## Under review
+
+* **Mozer, R.**, Pashley, N. E., and Miratrix, L. (2026). Stratified sampling for model-assisted estimation with surrogate outcomes. [arXiv preprint arXiv:2602.12992](https://arxiv.org/abs/2602.12992)
+
+* Rupcic, S., Jasuja, G. K., **Mozer, R.**, Xu, C., Anderson, E., Bokhour, B. G., Boudreau, J. H., DeLaughter, K. L., Douglas, J. H., Dryden, E., Gifford, A. L., Hyde, J., Tam, M. Z., Zeliadt, S. B., and Fix, G. M. (2025). A Retrospective Analysis of Person-Centered, Whole Health Use Among People Living with HIV. *Journal of General Internal Medicine* (Under review)
+
+* **Mozer, R.**, Kaufman, A. R., Celi, L. A., and Miratrix, L. Leveraging text data for causal inference using electronic health records: Investigating the efficacy of transthoracic echocardiography for sepsis. *Journal of the American Statistical Association* (Under review). [arXiv preprint arXiv:2307.03687](https://arxiv.org/abs/2307.03687)
+
+* Kim, Y., **Mozer, R.**, Miratrix, L., and Al-Adeimi, S. ChatGPT vs. Machine Learning: Assessing the Efficacy and Accuracy of Large Language Models for Automated Essay Scoring. *International Journal of Artificial Intelligence in Education* (Under review). [EdWorkingPaper: 25-1335](https://edworkingpapers.com/sites/default/files/ai25-1335.pdf)
+
 ## Publications
 
-* Rupcic S, Tam MZ, DeLaughter KL, Gifford AL, Barker AM, Bokhour BG, Xu C, Dryden E, Anderson E, Jasuja GK, Boudreau J, Douglas JH, Hyde J, **Mozer R.**, Zeliadt SB, Fix GM. (In press) Co-Designing a Blueprint for Spreading Person-Centered, Whole Health Care to HIV Specialty Care Settings: A Mixed Methods Protocol. *BMC Health Services Research*
+* **Mozer, R.** and Miratrix, L. (2025). More power to you: Using machine learning to augment human coding for more efficient inference in text-based randomized trials. *Annals of Applied Statistics*, 19(1):440--464
 
-* **Mozer, R.** & Miratrix, L. (In press). More power to you: Using machine learning to augment human coding for more efficient inference in text-based randomized trials. *Annals of Applied Statistics*
+* Rupcic, S., Tam, M. Z., DeLaughter, K. L., Gifford, A. L., Barker, A. M., Bokhour, B. G., Xu, C., Dryden, E., Anderson, E., Jasuja, G. K., Boudreau, J., Douglas, J. H., Hyde, J., **Mozer, R.**, Zeliadt, S. B., and Fix, G. M. (2024). Co-Designing a Blueprint for Spreading Person-Centered, Whole Health Care to HIV Specialty Care Settings: A Mixed Methods Protocol. *BMC Health Services Research*, 24(1):1306
 
-* **Mozer, R.**, Miratrix, L., Relyea, J. E., and Kim, J. S. (2023). [Combining human and automated scoring methods in experimental assessments of writing: A case study tutorial.](https://journals.sagepub.com/doi/full/10.3102/10769986231207886) *Journal of Educational and Behavioral Statistics*<br>
+* **Mozer, R.**, Miratrix, L., Relyea, J. E., and Kim, J. S. (2024). [Combining human and automated scoring methods in experimental assessments of writing: A case study tutorial.](https://journals.sagepub.com/doi/full/10.3102/10769986231207886) *Journal of Educational and Behavioral Statistics*, 49(5):780--816<br>
 	&nbsp;&nbsp;&nbsp;&nbsp; <img src="../images/github-mark.png" width="20" height="15"> [[Replication]](https://github.com/reaganmozer/reads-replication) &nbsp;&nbsp;&nbsp;&nbsp; <img src="../images/data.png" width="21" height="20"> [[Data]](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/J9KSHU)  
 
 * **Mozer, R.** and Glickman, M. E. (2023). [Bayesian analysis of longitudinal studies with treatment by indication.](https://link.springer.com/article/10.1007/s10742-022-00295-7) *Health Services and Outcomes Research Methodology*, 23(4):468--491<br>

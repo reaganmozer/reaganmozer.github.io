@@ -13,8 +13,7 @@ source "https://rubygems.org"
 # If you want to use Jekyll native, uncomment the line below.
 # To upgrade, run `bundle update`.
 
-gem "jekyll"
-gem "github-pages", group: :jekyll_plugins
+gem "jekyll", "~> 4.3"
 gem "minimal-mistakes-jekyll"
 gem "jekyll-include-cache"
 
@@ -25,7 +24,17 @@ group :jekyll_plugins do
   # gem "jekyll-archives"
   gem "jekyll-feed"
   gem 'jekyll-sitemap'
-  gem 'hawkins'
 end
 
 gem "webrick"
+
+gem "csv", "~> 3.3"
+
+gem "bigdecimal", "~> 4.0"
+gem "base64", "~> 0.2.0"
+gem "logger", "~> 1.7"
+gem "ostruct", "~> 0.6.3"
+
+gem "jekyll-paginate", "~> 1.1"
+gem "jekyll-gist", "~> 1.5"
+gem "jekyll-redirect-from", "~> 0.16.0"
