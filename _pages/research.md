@@ -13,6 +13,8 @@ author_profile: true
 
 ## Under review
 
+* **Mozer, R.** (2026). PPI is the difference estimator: Recognizing the survey sampling roots of prediction-powered inference. [arXiv preprint arXiv:2603.19160](https://arxiv.org/abs/2603.19160)
+
 * **Mozer, R.**, Pashley, N. E., and Miratrix, L. (2026). Stratified sampling for model-assisted estimation with surrogate outcomes. [arXiv preprint arXiv:2602.12992](https://arxiv.org/abs/2602.12992)
 
 * Rupcic, S., Jasuja, G. K., **Mozer, R.**, Xu, C., Anderson, E., Bokhour, B. G., Boudreau, J. H., DeLaughter, K. L., Douglas, J. H., Dryden, E., Gifford, A. L., Hyde, J., Tam, M. Z., Zeliadt, S. B., and Fix, G. M. (2025). A Retrospective Analysis of Person-Centered, Whole Health Use Among People Living with HIV. *Journal of General Internal Medicine* (Under review)
