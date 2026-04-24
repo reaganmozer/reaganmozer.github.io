@@ -642,7 +642,9 @@ function escapeHtml(s) {
 }
 function fmtDate(iso) {
   if (!iso) return "";
-  const d = new Date(iso);
+  // Parse YYYY-MM-DD as local date, not UTC
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
+  const d = m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date(iso);
   if (isNaN(d)) return iso;
   return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
 }
