@@ -608,8 +608,8 @@ async function syncOutlook() {
 
   let added = 0, updated = 0;
   for (const v of raw) {
-    const uid = v.UID;
-    if (!uid) continue;
+	const evtUid = v.UID;
+    if (!evtUid) continue;
     const start = parseIcsDate(v.DTSTART, v._DTSTART_raw);
     if (!start) continue;
     const title = decodeIcsText(v.SUMMARY) || "(no title)";
@@ -617,7 +617,7 @@ async function syncOutlook() {
     const location = decodeIcsText(v.LOCATION) || "";
     const notesFull = [location && `Location: ${location}`, notes].filter(Boolean).join("\n\n");
 
-    const existing = STATE.events.find(e => e.outlookUid === uid);
+    const existing = STATE.events.find(e => e.outlookUid === evtUid);
     if (existing) {
       existing.title = title;
       existing.date = start.date;
@@ -630,7 +630,7 @@ async function syncOutlook() {
         title, category: "other",
         date: start.date, time: start.time,
         notes: notesFull,
-        outlookUid: uid,
+        outlookUid: evtUid,
         createdAt: new Date().toISOString(),
       });
       added++;
