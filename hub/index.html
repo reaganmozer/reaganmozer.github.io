@@ -510,18 +510,32 @@ async function pullFromGithub() {
    OUTLOOK ICS SYNC
    ============================================================ */
 async function fetchIcs(url) {
-  // Try direct fetch first (works if CORS is allowed)
+  // Try direct first (works if CORS is allowed)
   try {
     const r = await fetch(url);
     if (r.ok) return await r.text();
-    throw new Error(`Direct fetch failed: ${r.status}`);
-  } catch (e) {
-    // Fall back to CORS proxy (public, rate-limited; fine for personal use)
-    const proxied = "https://corsproxy.io/?" + encodeURIComponent(url);
-    const r2 = await fetch(proxied);
-    if (!r2.ok) throw new Error(`Proxy fetch failed: ${r2.status}`);
-    return await r2.text();
+  } catch (e) { /* fall through */ }
+
+  // Try multiple public CORS proxies
+  const proxies = [
+    u => "https://api.allorigins.win/raw?url=" + encodeURIComponent(u),
+    u => "https://corsproxy.io/?" + encodeURIComponent(u),
+    u => "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(u),
+  ];
+  let lastErr = null;
+  for (const p of proxies) {
+    try {
+      const r = await fetch(p(url));
+      if (r.ok) {
+        const txt = await r.text();
+        if (txt && txt.includes("BEGIN:VCALENDAR")) return txt;
+      }
+      lastErr = new Error(`Proxy returned ${r.status}`);
+    } catch (e) {
+      lastErr = e;
+    }
   }
+  throw new Error(`All proxies failed: ${lastErr ? lastErr.message : "unknown"}`);
 }
 
 function parseIcs(text) {
