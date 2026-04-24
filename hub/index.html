@@ -374,11 +374,14 @@ const DEFAULT_DATA = {
   events: [],      // {id, title, category, date, time, notes, createdAt}
   notes: [],       // {id, title, category, body, createdAt, updatedAt}
   dayLog: {},      // { "YYYY-MM-DD": "free text log for that day" }
-  settings: {
+settings: {
     githubSync: false,
     githubToken: "",
     githubRepo: "",
     githubFile: "data.enc.json",
+    icsUrl: "",
+    icsAutoLog: true,
+    icsLastSync: null,
   },
 };
 
@@ -501,6 +504,154 @@ async function pullFromGithub() {
   LAST_REMOTE_SHA = json.sha;
   const contentStr = atob(json.content.replace(/\n/g, ""));
   return JSON.parse(contentStr);
+}
+
+/* ============================================================
+   OUTLOOK ICS SYNC
+   ============================================================ */
+async function fetchIcs(url) {
+  // Try direct fetch first (works if CORS is allowed)
+  try {
+    const r = await fetch(url);
+    if (r.ok) return await r.text();
+    throw new Error(`Direct fetch failed: ${r.status}`);
+  } catch (e) {
+    // Fall back to CORS proxy (public, rate-limited; fine for personal use)
+    const proxied = "https://corsproxy.io/?" + encodeURIComponent(url);
+    const r2 = await fetch(proxied);
+    if (!r2.ok) throw new Error(`Proxy fetch failed: ${r2.status}`);
+    return await r2.text();
+  }
+}
+
+function parseIcs(text) {
+  // Unfold folded lines (lines that start with a space continue the previous line)
+  const unfolded = text.replace(/\r?\n[ \t]/g, "");
+  const lines = unfolded.split(/\r?\n/);
+  const events = [];
+  let cur = null;
+  for (const line of lines) {
+    if (line === "BEGIN:VEVENT") { cur = {}; continue; }
+    if (line === "END:VEVENT") {
+      if (cur) events.push(cur);
+      cur = null;
+      continue;
+    }
+    if (!cur) continue;
+    const idx = line.indexOf(":");
+    if (idx < 0) continue;
+    const keyRaw = line.slice(0, idx);
+    const val = line.slice(idx + 1);
+    const key = keyRaw.split(";")[0];
+    cur[key] = val;
+    // Preserve raw key (including TZID etc) for DTSTART/DTEND
+    if (key === "DTSTART" || key === "DTEND") {
+      cur["_" + key + "_raw"] = keyRaw;
+    }
+  }
+  return events;
+}
+
+function parseIcsDate(val, rawKey) {
+  // Handle: 20260424T140000Z (UTC), 20260424T140000 (floating), 20260424 (date only)
+  if (!val) return null;
+  const isAllDay = rawKey && rawKey.includes("VALUE=DATE");
+  if (/^\d{8}$/.test(val)) {
+    const y = val.slice(0, 4), m = val.slice(4, 6), d = val.slice(6, 8);
+    return { date: `${y}-${m}-${d}`, time: "", allDay: true };
+  }
+  const m = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(Z)?$/.exec(val);
+  if (!m) return null;
+  const [, yr, mo, dy, hr, mn, sc, z] = m;
+  let dt;
+  if (z === "Z") {
+    dt = new Date(Date.UTC(+yr, +mo - 1, +dy, +hr, +mn, +sc));
+  } else {
+    dt = new Date(+yr, +mo - 1, +dy, +hr, +mn, +sc);
+  }
+  const pad = n => String(n).padStart(2, "0");
+  return {
+    date: `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}`,
+    time: `${pad(dt.getHours())}:${pad(dt.getMinutes())}`,
+    allDay: isAllDay,
+  };
+}
+
+function decodeIcsText(s) {
+  if (!s) return "";
+  return s
+    .replace(/\\n/g, "\n")
+    .replace(/\\,/g, ",")
+    .replace(/\\;/g, ";")
+    .replace(/\\\\/g, "\\");
+}
+
+async function syncOutlook() {
+  const url = STATE.settings.icsUrl;
+  if (!url) throw new Error("No ICS URL configured");
+  const text = await fetchIcs(url);
+  const raw = parseIcs(text);
+
+  let added = 0, updated = 0;
+  for (const v of raw) {
+    const uid = v.UID;
+    if (!uid) continue;
+    const start = parseIcsDate(v.DTSTART, v._DTSTART_raw);
+    if (!start) continue;
+    const title = decodeIcsText(v.SUMMARY) || "(no title)";
+    const notes = decodeIcsText(v.DESCRIPTION) || "";
+    const location = decodeIcsText(v.LOCATION) || "";
+    const notesFull = [location && `Location: ${location}`, notes].filter(Boolean).join("\n\n");
+
+    const existing = STATE.events.find(e => e.outlookUid === uid);
+    if (existing) {
+      existing.title = title;
+      existing.date = start.date;
+      existing.time = start.time;
+      existing.notes = notesFull;
+      updated++;
+    } else {
+      STATE.events.push({
+        id: uid(),
+        title, category: "other",
+        date: start.date, time: start.time,
+        notes: notesFull,
+        outlookUid: uid,
+        createdAt: new Date().toISOString(),
+      });
+      added++;
+    }
+  }
+
+  // Auto-populate daily log with the day's events
+  if (STATE.settings.icsAutoLog) {
+    const byDay = {};
+    for (const e of STATE.events) {
+      if (!e.outlookUid) continue;
+      if (!byDay[e.date]) byDay[e.date] = [];
+      byDay[e.date].push(e);
+    }
+    for (const [day, list] of Object.entries(byDay)) {
+      list.sort((a, b) => (a.time || "").localeCompare(b.time || ""));
+      const calendarSection = list.map(e =>
+        `${e.time || "all-day"} - ${e.title}`
+      ).join("\n");
+      const marker = "--- Calendar ---";
+      const prior = STATE.dayLog[day] || "";
+      // Replace existing calendar section or append
+      const re = new RegExp(marker + "[\\s\\S]*?(?:\\n\\n|$)", "m");
+      const newSection = `${marker}\n${calendarSection}\n`;
+      if (re.test(prior)) {
+        STATE.dayLog[day] = prior.replace(re, newSection);
+      } else {
+        STATE.dayLog[day] = (prior ? prior + "\n\n" : "") + newSection;
+      }
+    }
+  }
+
+  STATE.settings.icsLastSync = new Date().toISOString();
+  await persist();
+  return { added, updated, total: raw.length };
 }
 
 async function pushToGithub(payload) {
@@ -1033,7 +1184,27 @@ function viewSettings() {
           <button id="push-gh-btn">Push to GitHub now</button>
         </div>
       </div>
-
+<div class="settings-section">
+        <h3>Outlook Calendar Sync</h3>
+        <div class="desc">
+          Paste your Outlook ICS URL. Your calendar events will be imported as events in the hub and optionally auto-logged to your Daily Log. Keep this URL private; anyone with it can read your calendar.
+        </div>
+        <label for="ics-url">ICS URL</label>
+        <input type="password" id="ics-url" value="${escapeHtml(s.icsUrl)}" placeholder="https://outlook.office365.com/owa/calendar/.../calendar.ics" />
+        <div style="margin-top:10px;">
+          <label>
+            <input type="checkbox" class="checkbox" id="ics-autolog" ${s.icsAutoLog ? "checked" : ""} />
+            Auto-populate Daily Log with each day's events
+          </label>
+        </div>
+        <div style="margin-top:10px;">
+          <button class="primary" id="save-ics-btn">Save URL</button>
+          <button id="sync-ics-btn">Sync Outlook now</button>
+        </div>
+        <div class="desc" style="margin-top:8px;">
+          ${s.icsLastSync ? `Last sync: ${escapeHtml(new Date(s.icsLastSync).toLocaleString())}` : "Not synced yet."}
+        </div>
+      </div>
       <div class="settings-section">
         <h3>Danger Zone</h3>
         <div class="desc">Wipe all local data. This cannot be undone. Does not delete remote GitHub backup.</div>
@@ -1244,6 +1415,38 @@ function attachViewHandlers() {
       } catch (e) {
         setSyncStatus("Sync error", "err");
         alert("Push failed: " + e.message);
+      }
+    });
+  }
+  
+  const saveIcs = document.getElementById("save-ics-btn");
+  if (saveIcs) {
+    saveIcs.addEventListener("click", async () => {
+      STATE.settings.icsUrl = document.getElementById("ics-url").value.trim();
+      STATE.settings.icsAutoLog = document.getElementById("ics-autolog").checked;
+      await persist();
+      alert("Saved.");
+    });
+  }
+  const syncIcs = document.getElementById("sync-ics-btn");
+  if (syncIcs) {
+    syncIcs.addEventListener("click", async () => {
+      // Save any pending changes first
+      STATE.settings.icsUrl = document.getElementById("ics-url").value.trim();
+      STATE.settings.icsAutoLog = document.getElementById("ics-autolog").checked;
+      if (!STATE.settings.icsUrl) { alert("Enter your ICS URL first."); return; }
+      syncIcs.disabled = true;
+      syncIcs.textContent = "Syncing...";
+      try {
+        const result = await syncOutlook();
+        alert(`Synced. ${result.added} events added, ${result.updated} updated.`);
+        renderCurrentView();
+      } catch (e) {
+        alert("Sync failed: " + e.message);
+        console.error(e);
+      } finally {
+        syncIcs.disabled = false;
+        syncIcs.textContent = "Sync Outlook now";
       }
     });
   }
