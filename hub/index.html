@@ -509,33 +509,21 @@ async function pullFromGithub() {
 /* ============================================================
    OUTLOOK ICS SYNC
    ============================================================ */
-async function fetchIcs(url) {
-  // Try direct first (works if CORS is allowed)
-  try {
-    const r = await fetch(url);
-    if (r.ok) return await r.text();
-  } catch (e) { /* fall through */ }
-
-  // Try multiple public CORS proxies
-  const proxies = [
-    u => "https://api.allorigins.win/raw?url=" + encodeURIComponent(u),
-    u => "https://corsproxy.io/?" + encodeURIComponent(u),
-    u => "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(u),
-  ];
-  let lastErr = null;
-  for (const p of proxies) {
-    try {
-      const r = await fetch(p(url));
-      if (r.ok) {
-        const txt = await r.text();
-        if (txt && txt.includes("BEGIN:VCALENDAR")) return txt;
-      }
-      lastErr = new Error(`Proxy returned ${r.status}`);
-    } catch (e) {
-      lastErr = e;
-    }
+async function fetchIcs() {
+  const repo = STATE.settings.githubRepo;
+  const token = STATE.settings.githubToken;
+  if (!repo || !token) {
+    throw new Error("Configure GitHub sync first (Settings -> GitHub Sync) so the hub can read the calendar from your data repo.");
   }
-  throw new Error(`All proxies failed: ${lastErr ? lastErr.message : "unknown"}`);
+  const r = await fetch(`https://api.github.com/repos/${repo}/contents/calendar.ics`, {
+    headers: {
+      "Authorization": `token ${token}`,
+      "Accept": "application/vnd.github.raw",
+    },
+  });
+  if (r.status === 404) throw new Error("calendar.ics not found in data repo. Did the GitHub Action run?");
+  if (!r.ok) throw new Error(`Data repo fetch failed: ${r.status}`);
+  return await r.text();
 }
 
 function parseIcs(text) {
@@ -601,9 +589,7 @@ function decodeIcsText(s) {
 }
 
 async function syncOutlook() {
-  const url = STATE.settings.icsUrl;
-  if (!url) throw new Error("No ICS URL configured");
-  const text = await fetchIcs(url);
+  const text = await fetchIcs();
   const raw = parseIcs(text);
 
   let added = 0, updated = 0;
