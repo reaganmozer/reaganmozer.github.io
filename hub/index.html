@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Productivity Hub</title>
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --panel: #ffffff;
+    --ink: #1a1a1a;
+    --muted: #6b6b6b;
+    --accent: #8b0000;
+    --accent-soft: #f4e4e4;
+    --border: #e5e5e5;
+    --ok: #2e7d32;
+    --warn: #c77700;
+    --danger: #b00020;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: background 0.15s;
+  }
+  button:hover { background: #f0f0f0; }
+  button.primary {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+  button.primary:hover { background: #6b0000; }
+  button.ghost { background: transparent; border: 1px solid var(--border); }
+  button.icon { padding: 4px 8px; font-size: 13px; }
+  input, textarea, select {
+    font-family: inherit;
+    font-size: 14px;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: white;
+    width: 100%;
+  }
+  textarea { resize: vertical; min-height: 60px; }
+  label { font-size: 13px; color: var(--muted); display: block; margin-bottom: 4px; }
+
+  /* Login overlay */
+  #login-screen {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  #login-screen .box {
+    background: var(--panel);
+    padding: 32px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    width: 380px;
+    max-width: 90vw;
+  }
+  #login-screen h1 { margin-top: 0; font-size: 22px; }
+  #login-screen p { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+  #login-error { color: var(--danger); font-size: 13px; min-height: 18px; margin-top: 8px; }
+
+  /* App layout */
+  #app { display: none; }
+  header.top {
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 10;
+  }
+  header.top h1 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .header-actions { display: flex; gap: 8px; align-items: center; }
+  .header-actions .sync-status {
+    font-size: 12px; color: var(--muted);
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: var(--accent-soft);
+  }
+
+  nav.tabs {
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    overflow-x: auto;
+  }
+  nav.tabs button {
+    border: none;
+    background: transparent;
+    padding: 12px 16px;
+    border-radius: 0;
+    border-bottom: 2px solid transparent;
+    color: var(--muted);
+    font-size: 14px;
+    white-space: nowrap;
+  }
+  nav.tabs button.active {
+    color: var(--ink);
+    border-bottom-color: var(--accent);
+    font-weight: 600;
+  }
+  nav.tabs button:hover { background: #fafafa; }
+
+  main { padding: 24px; max-width: 1400px; margin: 0 auto; }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+  .panel h2 { margin-top: 0; font-size: 16px; font-weight: 600; }
+  .panel h3 { margin-top: 0; font-size: 14px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  @media (max-width: 900px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  /* Dashboard cards */
+  .category-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+  .category-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  .category-card .name { font-weight: 600; margin-bottom: 8px; }
+  .category-card .stats { font-size: 13px; color: var(--muted); }
+  .progress-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 8px 0;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.3s;
+  }
+
+  /* Items list */
+  .item-list { list-style: none; padding: 0; margin: 0; }
+  .item-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .item-list li:last-child { border-bottom: none; }
+  .item-list .meta {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .item-list .title {
+    font-weight: 500;
+    flex: 1;
+  }
+  .item-list .title.done {
+    text-decoration: line-through;
+    color: var(--muted);
+  }
+  .item-list .category-tag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 6px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 3px;
+    margin-right: 6px;
+  }
+  .item-list .deadline {
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+  .deadline.overdue { background: #ffe0e0; color: var(--danger); }
+  .deadline.soon { background: #fff0d0; color: var(--warn); }
+  .deadline.later { background: #f0f0f0; color: var(--muted); }
+
+  .add-form { margin-top: 16px; }
+  .add-form .row { display: flex; gap: 10px; margin-bottom: 10px; }
+  .add-form .row > * { flex: 1; }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  /* Tabs inside category view */
+  .subtabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .subtabs button {
+    border: none;
+    background: transparent;
+    padding: 8px 16px;
+    border-bottom: 2px solid transparent;
+    color: var(--muted);
+    border-radius: 0;
+  }
+  .subtabs button.active {
+    color: var(--ink);
+    border-bottom-color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* Daily log */
+  .day-entry {
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 10px;
+    background: #fafafa;
+  }
+  .day-entry .date {
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  .day-entry .body {
+    font-size: 14px;
+    white-space: pre-wrap;
+  }
+
+  /* Settings */
+  .settings-section {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .settings-section:last-child { border-bottom: none; }
+  .settings-section h3 {
+    color: var(--ink);
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+  .settings-section .desc {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  /* Modals */
+  .modal-bg {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100;
+  }
+  .modal {
+    background: var(--panel);
+    border-radius: 8px;
+    padding: 24px;
+    width: 500px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal h2 { margin-top: 0; }
+  .modal .actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
+
+  .checkbox { width: auto; margin-right: 8px; }
+  .hidden { display: none !important; }
+  .notes-textarea { min-height: 120px; }
+
+  .danger-btn { background: #fff0f0; color: var(--danger); border-color: #f0c0c0; }
+  .danger-btn:hover { background: #ffe0e0; }
+
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="box">
+    <h1>Productivity Hub</h1>
+    <p id="login-prompt">Enter your password to unlock.</p>
+    <div>
+      <label for="pw1">Password</label>
+      <input type="password" id="pw1" autofocus />
+    </div>
+    <div id="pw2-wrap" class="hidden" style="margin-top: 12px;">
+      <label for="pw2">Confirm password</label>
+      <input type="password" id="pw2" />
+    </div>
+    <div id="login-error"></div>
+    <div style="margin-top: 20px; display: flex; gap: 8px;">
+      <button class="primary" id="login-btn" style="flex: 1;">Unlock</button>
+    </div>
+    <p style="font-size: 12px; color: var(--muted); margin-top: 16px;">
+      Your data is encrypted in your browser with a key derived from this password. If you forget it, there is no recovery.
+    </p>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <header class="top">
+    <h1>Productivity Hub</h1>
+    <div class="header-actions">
+      <span class="sync-status" id="sync-status">Local only</span>
+      <button class="ghost" id="nav-settings-btn">Settings</button>
+      <button class="ghost" id="lock-btn">Lock</button>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs-nav">
+    <!-- populated by JS -->
+  </nav>
+
+  <main id="main-view"></main>
+</div>
+
+<script>
+/* ============================================================
+   STATE
+   ============================================================ */
+const CATEGORIES = [
+  { id: "research", name: "Research" },
+  { id: "teaching", name: "Teaching" },
+  { id: "internal", name: "Internal Service" },
+  { id: "external", name: "External Service" },
+  { id: "cads", name: "CADS" },
+  { id: "advising", name: "Advising/Mentoring" },
+  { id: "other", name: "Other" },
+];
+
+const DEFAULT_DATA = {
+  version: 1,
+  tasks: [],       // {id, title, category, deadline, done, notes, createdAt, completedAt}
+  events: [],      // {id, title, category, date, time, notes, createdAt}
+  notes: [],       // {id, title, category, body, createdAt, updatedAt}
+  dayLog: {},      // { "YYYY-MM-DD": "free text log for that day" }
+  settings: {
+    githubSync: false,
+    githubToken: "",
+    githubRepo: "",
+    githubFile: "data.enc.json",
+  },
+};
+
+let STATE = null;
+let ENC_KEY = null;
+let CURRENT_TAB = "dashboard";
+let CURRENT_CATEGORY = null;
+let CURRENT_SUBTAB = "tasks";
+let LAST_REMOTE_SHA = null;
+
+const STORAGE_KEY = "prodhub.v1.data";
+const SALT_KEY = "prodhub.v1.salt";
+
+/* ============================================================
+   CRYPTO (password-derived AES-GCM key)
+   ============================================================ */
+async function deriveKey(password, salt) {
+  const enc = new TextEncoder();
+  const baseKey = await crypto.subtle.importKey(
+    "raw",
+    enc.encode(password),
+    "PBKDF2",
+    false,
+    ["deriveKey"]
+  );
+  return await crypto.subtle.deriveKey(
+    { name: "PBKDF2", salt, iterations: 200000, hash: "SHA-256" },
+    baseKey,
+    { name: "AES-GCM", length: 256 },
+    false,
+    ["encrypt", "decrypt"]
+  );
+}
+
+function randomBytes(n) {
+  const a = new Uint8Array(n);
+  crypto.getRandomValues(a);
+  return a;
+}
+
+function b64encode(bytes) {
+  let s = "";
+  bytes.forEach(b => s += String.fromCharCode(b));
+  return btoa(s);
+}
+function b64decode(str) {
+  const s = atob(str);
+  const a = new Uint8Array(s.length);
+  for (let i = 0; i < s.length; i++) a[i] = s.charCodeAt(i);
+  return a;
+}
+
+async function encryptJson(obj, key) {
+  const iv = randomBytes(12);
+  const enc = new TextEncoder();
+  const data = enc.encode(JSON.stringify(obj));
+  const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, data);
+  return { iv: b64encode(iv), ct: b64encode(new Uint8Array(ct)) };
+}
+
+async function decryptJson(payload, key) {
+  const iv = b64decode(payload.iv);
+  const ct = b64decode(payload.ct);
+  const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ct);
+  const dec = new TextDecoder();
+  return JSON.parse(dec.decode(pt));
+}
+
+/* ============================================================
+   LOCAL STORAGE
+   ============================================================ */
+function loadSalt() {
+  const raw = localStorage.getItem(SALT_KEY);
+  return raw ? b64decode(raw) : null;
+}
+function saveSalt(salt) {
+  localStorage.setItem(SALT_KEY, b64encode(salt));
+}
+function loadCiphertext() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  return raw ? JSON.parse(raw) : null;
+}
+function saveCiphertext(payload) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+}
+
+async function persist() {
+  STATE.updatedAt = new Date().toISOString();
+  const payload = await encryptJson(STATE, ENC_KEY);
+  saveCiphertext(payload);
+  if (STATE.settings.githubSync && STATE.settings.githubToken && STATE.settings.githubRepo) {
+    try {
+      await pushToGithub(payload);
+      setSyncStatus("Synced", "ok");
+    } catch (e) {
+      setSyncStatus("Sync error", "err");
+      console.error(e);
+    }
+  }
+}
+
+/* ============================================================
+   GITHUB SYNC (optional)
+   ============================================================ */
+function githubApiBase() {
+  return `https://api.github.com/repos/${STATE.settings.githubRepo}/contents/${STATE.settings.githubFile}`;
+}
+function githubHeaders() {
+  return {
+    "Authorization": `token ${STATE.settings.githubToken}`,
+    "Accept": "application/vnd.github+json",
+  };
+}
+
+async function pullFromGithub() {
+  const resp = await fetch(githubApiBase(), { headers: githubHeaders() });
+  if (resp.status === 404) return null;
+  if (!resp.ok) throw new Error(`GitHub pull failed: ${resp.status}`);
+  const json = await resp.json();
+  LAST_REMOTE_SHA = json.sha;
+  const contentStr = atob(json.content.replace(/\n/g, ""));
+  return JSON.parse(contentStr);
+}
+
+async function pushToGithub(payload) {
+  const contentStr = JSON.stringify(payload);
+  const contentB64 = btoa(contentStr);
+  const body = {
+    message: `Sync ${new Date().toISOString()}`,
+    content: contentB64,
+  };
+  if (LAST_REMOTE_SHA) body.sha = LAST_REMOTE_SHA;
+  const resp = await fetch(githubApiBase(), {
+    method: "PUT",
+    headers: { ...githubHeaders(), "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!resp.ok) {
+    const text = await resp.text();
+    throw new Error(`GitHub push failed: ${resp.status} ${text}`);
+  }
+  const json = await resp.json();
+  LAST_REMOTE_SHA = json.content.sha;
+}
+
+function setSyncStatus(text, level) {
+  const el = document.getElementById("sync-status");
+  el.textContent = text;
+  el.style.background = level === "ok" ? "#e0f0e0"
+    : level === "err" ? "#ffe0e0"
+    : "var(--accent-soft)";
+}
+
+/* ============================================================
+   LOGIN / UNLOCK
+   ============================================================ */
+async function attemptLogin() {
+  const pw1 = document.getElementById("pw1").value;
+  const pw2El = document.getElementById("pw2");
+  const errEl = document.getElementById("login-error");
+  errEl.textContent = "";
+  const isFirstTime = !loadCiphertext();
+
+  if (!pw1) { errEl.textContent = "Enter a password."; return; }
+
+  if (isFirstTime) {
+    if (!pw2El || pw1 !== pw2El.value) {
+      errEl.textContent = "Passwords do not match.";
+      return;
+    }
+    if (pw1.length < 8) {
+      errEl.textContent = "Use at least 8 characters.";
+      return;
+    }
+    const salt = randomBytes(16);
+    saveSalt(salt);
+    ENC_KEY = await deriveKey(pw1, salt);
+    STATE = JSON.parse(JSON.stringify(DEFAULT_DATA));
+    await persist();
+    enterApp();
+  } else {
+    const salt = loadSalt();
+    if (!salt) { errEl.textContent = "Missing salt. Clear site data and try again."; return; }
+    try {
+      ENC_KEY = await deriveKey(pw1, salt);
+      const payload = loadCiphertext();
+      STATE = await decryptJson(payload, ENC_KEY);
+      mergeDefaults();
+      enterApp();
+    } catch (e) {
+      errEl.textContent = "Incorrect password.";
+    }
+  }
+}
+
+function mergeDefaults() {
+  // Ensure schema upgrades if new fields are added
+  for (const k of Object.keys(DEFAULT_DATA)) {
+    if (!(k in STATE)) STATE[k] = JSON.parse(JSON.stringify(DEFAULT_DATA[k]));
+  }
+  for (const k of Object.keys(DEFAULT_DATA.settings)) {
+    if (!(k in STATE.settings)) STATE.settings[k] = DEFAULT_DATA.settings[k];
+  }
+}
+
+function enterApp() {
+  document.getElementById("login-screen").style.display = "none";
+  document.getElementById("app").style.display = "block";
+  renderTabs();
+  navigateTo("dashboard");
+  if (STATE.settings.githubSync) {
+    setSyncStatus("Syncing...", null);
+    tryRemotePull();
+  }
+}
+
+async function tryRemotePull() {
+  try {
+    const remote = await pullFromGithub();
+    if (remote) {
+      const remoteState = await decryptJson(remote, ENC_KEY);
+      // If remote is newer, use it
+      const localTime = STATE.updatedAt || "";
+      const remoteTime = remoteState.updatedAt || "";
+      if (remoteTime > localTime) {
+        STATE = remoteState;
+        mergeDefaults();
+        saveCiphertext(remote);
+        renderCurrentView();
+      }
+      setSyncStatus("Synced", "ok");
+    } else {
+      setSyncStatus("Synced (new)", "ok");
+    }
+  } catch (e) {
+    setSyncStatus("Sync error", "err");
+    console.error(e);
+  }
+}
+
+function lockApp() {
+  ENC_KEY = null;
+  STATE = null;
+  document.getElementById("app").style.display = "none";
+  document.getElementById("login-screen").style.display = "flex";
+  document.getElementById("pw1").value = "";
+  if (document.getElementById("pw2")) document.getElementById("pw2").value = "";
+}
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+function escapeHtml(s) {
+  if (s == null) return "";
+  return String(s).replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+  }[c]));
+}
+function fmtDate(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (isNaN(d)) return iso;
+  return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+}
+function todayIso() {
+  return new Date().toISOString().slice(0, 10);
+}
+function deadlineClass(iso) {
+  if (!iso) return "";
+  const now = new Date(); now.setHours(0,0,0,0);
+  const d = new Date(iso); d.setHours(0,0,0,0);
+  const diff = (d - now) / (1000*60*60*24);
+  if (diff < 0) return "overdue";
+  if (diff <= 7) return "soon";
+  return "later";
+}
+function categoryName(id) {
+  return (CATEGORIES.find(c => c.id === id) || {}).name || id;
+}
+
+/* ============================================================
+   RENDERING
+   ============================================================ */
+function renderTabs() {
+  const nav = document.getElementById("tabs-nav");
+  const tabs = [
+    { id: "dashboard", name: "Dashboard" },
+    ...CATEGORIES,
+    { id: "daylog", name: "Daily Log" },
+  ];
+  nav.innerHTML = tabs.map(t =>
+    `<button data-tab="${t.id}" class="${CURRENT_TAB === t.id ? 'active' : ''}">${escapeHtml(t.name)}</button>`
+  ).join("");
+  nav.querySelectorAll("button").forEach(b => {
+    b.addEventListener("click", () => navigateTo(b.dataset.tab));
+  });
+}
+
+function navigateTo(tab) {
+  CURRENT_TAB = tab;
+  if (tab !== "dashboard" && tab !== "daylog" && tab !== "settings") {
+    CURRENT_CATEGORY = tab;
+  }
+  renderTabs();
+  renderCurrentView();
+}
+
+function renderCurrentView() {
+  const main = document.getElementById("main-view");
+  if (CURRENT_TAB === "dashboard") main.innerHTML = viewDashboard();
+  else if (CURRENT_TAB === "daylog") main.innerHTML = viewDayLog();
+  else if (CURRENT_TAB === "settings") main.innerHTML = viewSettings();
+  else main.innerHTML = viewCategory(CURRENT_TAB);
+  attachViewHandlers();
+}
+
+/* ----- DASHBOARD ----- */
+function viewDashboard() {
+  // Upcoming deadlines (tasks not done with deadline)
+  const upcoming = STATE.tasks
+    .filter(t => !t.done && t.deadline)
+    .sort((a, b) => a.deadline.localeCompare(b.deadline))
+    .slice(0, 10);
+
+  // Upcoming events
+  const today = todayIso();
+  const events = STATE.events
+    .filter(e => e.date >= today)
+    .sort((a, b) => (a.date + (a.time || "")).localeCompare(b.date + (b.time || "")))
+    .slice(0, 10);
+
+  // Category progress
+  const catStats = CATEGORIES.map(cat => {
+    const tasks = STATE.tasks.filter(t => t.category === cat.id);
+    const done = tasks.filter(t => t.done).length;
+    const total = tasks.length;
+    const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+    const openCount = total - done;
+    return { ...cat, done, total, pct, openCount };
+  });
+
+  return `
+    <div class="grid-2">
+      <div class="panel">
+        <h2>Upcoming Deadlines</h2>
+        ${upcoming.length === 0 ? `<div class="empty-state">No deadlines yet</div>` : `
+          <ul class="item-list">
+            ${upcoming.map(t => `
+              <li>
+                <div class="title">
+                  <span class="category-tag">${escapeHtml(categoryName(t.category))}</span>
+                  ${escapeHtml(t.title)}
+                </div>
+                <span class="deadline ${deadlineClass(t.deadline)}">${fmtDate(t.deadline)}</span>
+              </li>
+            `).join("")}
+          </ul>
+        `}
+      </div>
+      <div class="panel">
+        <h2>Upcoming Events</h2>
+        ${events.length === 0 ? `<div class="empty-state">No events scheduled</div>` : `
+          <ul class="item-list">
+            ${events.map(e => `
+              <li>
+                <div class="title">
+                  <span class="category-tag">${escapeHtml(categoryName(e.category))}</span>
+                  ${escapeHtml(e.title)}
+                </div>
+                <span class="meta">${fmtDate(e.date)}${e.time ? " at " + escapeHtml(e.time) : ""}</span>
+              </li>
+            `).join("")}
+          </ul>
+        `}
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Progress by Area</h2>
+      <div class="grid-3">
+        ${catStats.map(c => `
+          <div class="category-card" data-cat="${c.id}">
+            <div class="name">${escapeHtml(c.name)}</div>
+            <div class="progress-bar"><div class="progress-bar-fill" style="width:${c.pct}%"></div></div>
+            <div class="stats">${c.done}/${c.total} tasks done (${c.pct}%) &middot; ${c.openCount} open</div>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Quick Add Task</h2>
+      <div class="add-form">
+        <div class="row">
+          <input type="text" id="quick-title" placeholder="Task title..." />
+          <select id="quick-category">
+            ${CATEGORIES.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join("")}
+          </select>
+          <input type="date" id="quick-deadline" />
+          <button class="primary" id="quick-add-btn">Add</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ----- CATEGORY VIEW ----- */
+function viewCategory(catId) {
+  const cat = CATEGORIES.find(c => c.id === catId);
+  if (!cat) return `<div class="panel"><h2>Unknown category</h2></div>`;
+  const sub = CURRENT_SUBTAB || "tasks";
+
+  return `
+    <div class="panel">
+      <h2>${escapeHtml(cat.name)}</h2>
+      <div class="subtabs" id="subtabs">
+        <button data-sub="tasks" class="${sub === 'tasks' ? 'active' : ''}">Tasks</button>
+        <button data-sub="events" class="${sub === 'events' ? 'active' : ''}">Events</button>
+        <button data-sub="notes" class="${sub === 'notes' ? 'active' : ''}">Notes</button>
+      </div>
+      <div id="subtab-content">
+        ${sub === 'tasks' ? renderCategoryTasks(catId)
+          : sub === 'events' ? renderCategoryEvents(catId)
+          : renderCategoryNotes(catId)}
+      </div>
+    </div>
+  `;
+}
+
+function renderCategoryTasks(catId) {
+  const tasks = STATE.tasks.filter(t => t.category === catId);
+  const open = tasks.filter(t => !t.done)
+    .sort((a, b) => (a.deadline || "9999").localeCompare(b.deadline || "9999"));
+  const done = tasks.filter(t => t.done)
+    .sort((a, b) => (b.completedAt || "").localeCompare(a.completedAt || ""));
+
+  return `
+    <div class="add-form">
+      <div class="row">
+        <input type="text" id="new-task-title" placeholder="New task..." />
+        <input type="date" id="new-task-deadline" />
+        <button class="primary" id="add-task-btn">Add Task</button>
+      </div>
+      <textarea id="new-task-notes" placeholder="Notes (optional)"></textarea>
+    </div>
+
+    <h3 style="margin-top: 24px;">Open (${open.length})</h3>
+    ${open.length === 0 ? `<div class="empty-state">No open tasks</div>` : `
+      <ul class="item-list">
+        ${open.map(t => `
+          <li>
+            <input type="checkbox" class="checkbox task-toggle" data-id="${t.id}" />
+            <div class="title">
+              ${escapeHtml(t.title)}
+              ${t.notes ? `<div class="meta">${escapeHtml(t.notes)}</div>` : ""}
+            </div>
+            ${t.deadline ? `<span class="deadline ${deadlineClass(t.deadline)}">${fmtDate(t.deadline)}</span>` : ""}
+            <button class="icon task-edit" data-id="${t.id}">Edit</button>
+            <button class="icon danger-btn task-delete" data-id="${t.id}">Delete</button>
+          </li>
+        `).join("")}
+      </ul>
+    `}
+
+    <h3 style="margin-top: 24px;">Completed (${done.length})</h3>
+    ${done.length === 0 ? `<div class="empty-state">No completed tasks yet</div>` : `
+      <ul class="item-list">
+        ${done.slice(0, 20).map(t => `
+          <li>
+            <input type="checkbox" class="checkbox task-toggle" data-id="${t.id}" checked />
+            <div class="title done">${escapeHtml(t.title)}</div>
+            ${t.completedAt ? `<span class="meta">Done ${fmtDate(t.completedAt)}</span>` : ""}
+            <button class="icon danger-btn task-delete" data-id="${t.id}">Delete</button>
+          </li>
+        `).join("")}
+      </ul>
+    `}
+  `;
+}
+
+function renderCategoryEvents(catId) {
+  const events = STATE.events.filter(e => e.category === catId)
+    .sort((a, b) => (b.date + (b.time || "")).localeCompare(a.date + (a.time || "")));
+  const today = todayIso();
+  const upcoming = events.filter(e => e.date >= today).reverse();
+  const past = events.filter(e => e.date < today);
+
+  return `
+    <div class="add-form">
+      <div class="row">
+        <input type="text" id="new-event-title" placeholder="Event title..." />
+        <input type="date" id="new-event-date" />
+        <input type="time" id="new-event-time" />
+        <button class="primary" id="add-event-btn">Add Event</button>
+      </div>
+      <textarea id="new-event-notes" placeholder="Notes (optional)"></textarea>
+    </div>
+
+    <h3 style="margin-top: 24px;">Upcoming (${upcoming.length})</h3>
+    ${upcoming.length === 0 ? `<div class="empty-state">No upcoming events</div>` : `
+      <ul class="item-list">
+        ${upcoming.map(e => `
+          <li>
+            <div class="title">
+              ${escapeHtml(e.title)}
+              ${e.notes ? `<div class="meta">${escapeHtml(e.notes)}</div>` : ""}
+            </div>
+            <span class="meta">${fmtDate(e.date)}${e.time ? " at " + escapeHtml(e.time) : ""}</span>
+            <button class="icon danger-btn event-delete" data-id="${e.id}">Delete</button>
+          </li>
+        `).join("")}
+      </ul>
+    `}
+
+    <h3 style="margin-top: 24px;">Past (${past.length})</h3>
+    ${past.length === 0 ? `<div class="empty-state">No past events recorded</div>` : `
+      <ul class="item-list">
+        ${past.slice(0, 20).map(e => `
+          <li>
+            <div class="title">
+              ${escapeHtml(e.title)}
+              ${e.notes ? `<div class="meta">${escapeHtml(e.notes)}</div>` : ""}
+            </div>
+            <span class="meta">${fmtDate(e.date)}${e.time ? " at " + escapeHtml(e.time) : ""}</span>
+            <button class="icon danger-btn event-delete" data-id="${e.id}">Delete</button>
+          </li>
+        `).join("")}
+      </ul>
+    `}
+  `;
+}
+
+function renderCategoryNotes(catId) {
+  const notes = STATE.notes.filter(n => n.category === catId)
+    .sort((a, b) => (b.updatedAt || b.createdAt).localeCompare(a.updatedAt || a.createdAt));
+
+  return `
+    <div class="add-form">
+      <div class="row">
+        <input type="text" id="new-note-title" placeholder="Note title..." />
+        <button class="primary" id="add-note-btn">Add Note</button>
+      </div>
+      <textarea id="new-note-body" class="notes-textarea" placeholder="Write your note here..."></textarea>
+    </div>
+
+    <h3 style="margin-top: 24px;">Notes (${notes.length})</h3>
+    ${notes.length === 0 ? `<div class="empty-state">No notes yet</div>` : `
+      ${notes.map(n => `
+        <div class="panel" style="margin-top: 12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <strong>${escapeHtml(n.title)}</strong>
+            <div>
+              <button class="icon note-edit" data-id="${n.id}">Edit</button>
+              <button class="icon danger-btn note-delete" data-id="${n.id}">Delete</button>
+            </div>
+          </div>
+          <div class="meta" style="font-size:12px;color:var(--muted);margin:4px 0 8px;">
+            Updated ${fmtDate(n.updatedAt || n.createdAt)}
+          </div>
+          <div style="white-space:pre-wrap;">${escapeHtml(n.body)}</div>
+        </div>
+      `).join("")}
+    `}
+  `;
+}
+
+/* ----- DAILY LOG ----- */
+function viewDayLog() {
+  const today = todayIso();
+  const entries = Object.keys(STATE.dayLog).sort().reverse();
+  const todayBody = STATE.dayLog[today] || "";
+
+  return `
+    <div class="panel">
+      <h2>Today: ${fmtDate(today)}</h2>
+      <p style="color:var(--muted);font-size:13px;">
+        Note what you worked on today. This builds a personal log over time.
+      </p>
+      <textarea id="today-log" class="notes-textarea" placeholder="What did you do today?">${escapeHtml(todayBody)}</textarea>
+      <div style="margin-top:10px;">
+        <button class="primary" id="save-today-btn">Save today's log</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>History (${entries.length} days)</h2>
+      ${entries.length === 0 ? `<div class="empty-state">No past entries yet</div>` : `
+        ${entries.filter(d => d !== today).map(d => `
+          <div class="day-entry">
+            <div class="date">${fmtDate(d)}</div>
+            <div class="body">${escapeHtml(STATE.dayLog[d])}</div>
+            <div style="margin-top:6px;">
+              <button class="icon day-edit" data-date="${d}">Edit</button>
+              <button class="icon danger-btn day-delete" data-date="${d}">Delete</button>
+            </div>
+          </div>
+        `).join("")}
+      `}
+    </div>
+  `;
+}
+
+/* ----- SETTINGS ----- */
+function viewSettings() {
+  const s = STATE.settings;
+  return `
+    <div class="panel">
+      <h2>Settings</h2>
+
+      <div class="settings-section">
+        <h3>Data Export / Import</h3>
+        <div class="desc">Download a backup or restore from a previous backup. Backups are encrypted; you need your password to restore.</div>
+        <button id="export-btn">Export encrypted backup</button>
+        <button id="export-plain-btn">Export as plain JSON</button>
+        <input type="file" id="import-file" accept=".json" style="width:auto;display:inline-block;margin-left:8px;" />
+      </div>
+
+      <div class="settings-section">
+        <h3>GitHub Sync (optional)</h3>
+        <div class="desc">
+          Store your encrypted data in a private GitHub repo so you can access it from any computer.
+          See the setup guide for how to create a personal access token.
+        </div>
+        <label>
+          <input type="checkbox" class="checkbox" id="gh-enabled" ${s.githubSync ? "checked" : ""} />
+          Enable GitHub sync
+        </label>
+        <div style="margin-top:10px;">
+          <label for="gh-repo">Repo (format: username/repo-name)</label>
+          <input type="text" id="gh-repo" value="${escapeHtml(s.githubRepo)}" placeholder="rmozer/productivity-data" />
+        </div>
+        <div style="margin-top:10px;">
+          <label for="gh-file">Filename in repo</label>
+          <input type="text" id="gh-file" value="${escapeHtml(s.githubFile)}" placeholder="data.enc.json" />
+        </div>
+        <div style="margin-top:10px;">
+          <label for="gh-token">Personal access token (stored encrypted)</label>
+          <input type="password" id="gh-token" value="${escapeHtml(s.githubToken)}" placeholder="ghp_..." />
+        </div>
+        <div style="margin-top:10px;">
+          <button class="primary" id="save-gh-btn">Save settings</button>
+          <button id="pull-gh-btn">Pull from GitHub now</button>
+          <button id="push-gh-btn">Push to GitHub now</button>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Danger Zone</h3>
+        <div class="desc">Wipe all local data. This cannot be undone. Does not delete remote GitHub backup.</div>
+        <button class="danger-btn" id="wipe-btn">Wipe local data</button>
+      </div>
+    </div>
+  `;
+}
+
+/* ============================================================
+   EVENT HANDLERS
+   ============================================================ */
+function attachViewHandlers() {
+  // Dashboard
+  const quickAdd = document.getElementById("quick-add-btn");
+  if (quickAdd) {
+    quickAdd.addEventListener("click", async () => {
+      const title = document.getElementById("quick-title").value.trim();
+      const category = document.getElementById("quick-category").value;
+      const deadline = document.getElementById("quick-deadline").value || null;
+      if (!title) return;
+      STATE.tasks.push({
+        id: uid(), title, category, deadline,
+        done: false, notes: "", createdAt: new Date().toISOString(),
+      });
+      await persist();
+      renderCurrentView();
+    });
+  }
+  document.querySelectorAll(".category-card").forEach(el => {
+    el.addEventListener("click", () => navigateTo(el.dataset.cat));
+  });
+
+  // Category subtabs
+  document.querySelectorAll("#subtabs button").forEach(b => {
+    b.addEventListener("click", () => {
+      CURRENT_SUBTAB = b.dataset.sub;
+      renderCurrentView();
+    });
+  });
+
+  // Category: tasks
+  const addTask = document.getElementById("add-task-btn");
+  if (addTask) {
+    addTask.addEventListener("click", async () => {
+      const title = document.getElementById("new-task-title").value.trim();
+      const deadline = document.getElementById("new-task-deadline").value || null;
+      const notes = document.getElementById("new-task-notes").value.trim();
+      if (!title) return;
+      STATE.tasks.push({
+        id: uid(), title, category: CURRENT_CATEGORY,
+        deadline, done: false, notes,
+        createdAt: new Date().toISOString(),
+      });
+      await persist();
+      renderCurrentView();
+    });
+  }
+  document.querySelectorAll(".task-toggle").forEach(el => {
+    el.addEventListener("change", async () => {
+      const t = STATE.tasks.find(x => x.id === el.dataset.id);
+      if (!t) return;
+      t.done = el.checked;
+      t.completedAt = el.checked ? new Date().toISOString() : null;
+      await persist();
+      renderCurrentView();
+    });
+  });
+  document.querySelectorAll(".task-delete").forEach(el => {
+    el.addEventListener("click", async () => {
+      if (!confirm("Delete this task?")) return;
+      STATE.tasks = STATE.tasks.filter(t => t.id !== el.dataset.id);
+      await persist();
+      renderCurrentView();
+    });
+  });
+  document.querySelectorAll(".task-edit").forEach(el => {
+    el.addEventListener("click", () => openTaskEditModal(el.dataset.id));
+  });
+
+  // Category: events
+  const addEvent = document.getElementById("add-event-btn");
+  if (addEvent) {
+    addEvent.addEventListener("click", async () => {
+      const title = document.getElementById("new-event-title").value.trim();
+      const date = document.getElementById("new-event-date").value;
+      const time = document.getElementById("new-event-time").value;
+      const notes = document.getElementById("new-event-notes").value.trim();
+      if (!title || !date) return;
+      STATE.events.push({
+        id: uid(), title, category: CURRENT_CATEGORY,
+        date, time, notes,
+        createdAt: new Date().toISOString(),
+      });
+      await persist();
+      renderCurrentView();
+    });
+  }
+  document.querySelectorAll(".event-delete").forEach(el => {
+    el.addEventListener("click", async () => {
+      if (!confirm("Delete this event?")) return;
+      STATE.events = STATE.events.filter(e => e.id !== el.dataset.id);
+      await persist();
+      renderCurrentView();
+    });
+  });
+
+  // Category: notes
+  const addNote = document.getElementById("add-note-btn");
+  if (addNote) {
+    addNote.addEventListener("click", async () => {
+      const title = document.getElementById("new-note-title").value.trim();
+      const body = document.getElementById("new-note-body").value.trim();
+      if (!title) return;
+      const now = new Date().toISOString();
+      STATE.notes.push({
+        id: uid(), title, category: CURRENT_CATEGORY,
+        body, createdAt: now, updatedAt: now,
+      });
+      await persist();
+      renderCurrentView();
+    });
+  }
+  document.querySelectorAll(".note-delete").forEach(el => {
+    el.addEventListener("click", async () => {
+      if (!confirm("Delete this note?")) return;
+      STATE.notes = STATE.notes.filter(n => n.id !== el.dataset.id);
+      await persist();
+      renderCurrentView();
+    });
+  });
+  document.querySelectorAll(".note-edit").forEach(el => {
+    el.addEventListener("click", () => openNoteEditModal(el.dataset.id));
+  });
+
+  // Day log
+  const saveToday = document.getElementById("save-today-btn");
+  if (saveToday) {
+    saveToday.addEventListener("click", async () => {
+      const v = document.getElementById("today-log").value;
+      STATE.dayLog[todayIso()] = v;
+      await persist();
+      alert("Saved.");
+    });
+  }
+  document.querySelectorAll(".day-edit").forEach(el => {
+    el.addEventListener("click", () => {
+      const date = el.dataset.date;
+      const current = STATE.dayLog[date] || "";
+      const updated = prompt("Edit log for " + date, current);
+      if (updated !== null) {
+        STATE.dayLog[date] = updated;
+        persist().then(renderCurrentView);
+      }
+    });
+  });
+  document.querySelectorAll(".day-delete").forEach(el => {
+    el.addEventListener("click", async () => {
+      if (!confirm("Delete this day's log?")) return;
+      delete STATE.dayLog[el.dataset.date];
+      await persist();
+      renderCurrentView();
+    });
+  });
+
+  // Settings
+  const saveGh = document.getElementById("save-gh-btn");
+  if (saveGh) {
+    saveGh.addEventListener("click", async () => {
+      STATE.settings.githubSync = document.getElementById("gh-enabled").checked;
+      STATE.settings.githubRepo = document.getElementById("gh-repo").value.trim();
+      STATE.settings.githubFile = document.getElementById("gh-file").value.trim() || "data.enc.json";
+      STATE.settings.githubToken = document.getElementById("gh-token").value.trim();
+      await persist();
+      alert("Settings saved.");
+    });
+  }
+  const pullGh = document.getElementById("pull-gh-btn");
+  if (pullGh) {
+    pullGh.addEventListener("click", async () => {
+      setSyncStatus("Pulling...", null);
+      try {
+        const remote = await pullFromGithub();
+        if (!remote) { setSyncStatus("Synced (none)", "ok"); alert("No remote data yet."); return; }
+        const remoteState = await decryptJson(remote, ENC_KEY);
+        STATE = remoteState;
+        mergeDefaults();
+        saveCiphertext(remote);
+        setSyncStatus("Synced", "ok");
+        renderCurrentView();
+        alert("Pulled from GitHub.");
+      } catch (e) {
+        setSyncStatus("Sync error", "err");
+        alert("Pull failed: " + e.message);
+      }
+    });
+  }
+  const pushGh = document.getElementById("push-gh-btn");
+  if (pushGh) {
+    pushGh.addEventListener("click", async () => {
+      setSyncStatus("Pushing...", null);
+      try {
+        const payload = await encryptJson(STATE, ENC_KEY);
+        await pushToGithub(payload);
+        saveCiphertext(payload);
+        setSyncStatus("Synced", "ok");
+        alert("Pushed to GitHub.");
+      } catch (e) {
+        setSyncStatus("Sync error", "err");
+        alert("Push failed: " + e.message);
+      }
+    });
+  }
+  const exportBtn = document.getElementById("export-btn");
+  if (exportBtn) {
+    exportBtn.addEventListener("click", async () => {
+      const payload = await encryptJson(STATE, ENC_KEY);
+      const salt = loadSalt();
+      const blob = new Blob([JSON.stringify({ ...payload, salt: b64encode(salt) }, null, 2)], { type: "application/json" });
+      downloadBlob(blob, "prodhub-backup-encrypted.json");
+    });
+  }
+  const exportPlain = document.getElementById("export-plain-btn");
+  if (exportPlain) {
+    exportPlain.addEventListener("click", () => {
+      if (!confirm("This exports UNENCRYPTED data. Continue?")) return;
+      const blob = new Blob([JSON.stringify(STATE, null, 2)], { type: "application/json" });
+      downloadBlob(blob, "prodhub-backup-plain.json");
+    });
+  }
+  const importFile = document.getElementById("import-file");
+  if (importFile) {
+    importFile.addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+      if (parsed.iv && parsed.ct) {
+        // Encrypted backup
+        if (parsed.salt) {
+          saveSalt(b64decode(parsed.salt));
+          const pw = prompt("Enter password for this backup:");
+          if (!pw) return;
+          try {
+            const key = await deriveKey(pw, b64decode(parsed.salt));
+            const restored = await decryptJson({ iv: parsed.iv, ct: parsed.ct }, key);
+            STATE = restored;
+            ENC_KEY = key;
+            mergeDefaults();
+            await persist();
+            renderCurrentView();
+            alert("Restored.");
+          } catch (err) {
+            alert("Could not decrypt: " + err.message);
+          }
+        } else {
+          try {
+            const restored = await decryptJson({ iv: parsed.iv, ct: parsed.ct }, ENC_KEY);
+            STATE = restored;
+            mergeDefaults();
+            await persist();
+            renderCurrentView();
+            alert("Restored.");
+          } catch (err) {
+            alert("Could not decrypt: " + err.message);
+          }
+        }
+      } else {
+        // Plain JSON
+        if (!confirm("Import plain JSON and replace current data?")) return;
+        STATE = parsed;
+        mergeDefaults();
+        await persist();
+        renderCurrentView();
+        alert("Imported.");
+      }
+    });
+  }
+  const wipeBtn = document.getElementById("wipe-btn");
+  if (wipeBtn) {
+    wipeBtn.addEventListener("click", () => {
+      if (!confirm("WIPE ALL local data? This cannot be undone.")) return;
+      if (!confirm("Really? All tasks, notes, events, logs will be deleted locally.")) return;
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(SALT_KEY);
+      location.reload();
+    });
+  }
+}
+
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  a.remove(); URL.revokeObjectURL(url);
+}
+
+/* ============================================================
+   MODALS
+   ============================================================ */
+function openTaskEditModal(id) {
+  const t = STATE.tasks.find(x => x.id === id);
+  if (!t) return;
+  const modal = document.createElement("div");
+  modal.className = "modal-bg";
+  modal.innerHTML = `
+    <div class="modal">
+      <h2>Edit Task</h2>
+      <label>Title</label>
+      <input type="text" id="mt-title" value="${escapeHtml(t.title)}" />
+      <div style="margin-top:10px;"><label>Category</label>
+        <select id="mt-category">
+          ${CATEGORIES.map(c => `<option value="${c.id}" ${c.id === t.category ? "selected" : ""}>${escapeHtml(c.name)}</option>`).join("")}
+        </select>
+      </div>
+      <div style="margin-top:10px;"><label>Deadline</label>
+        <input type="date" id="mt-deadline" value="${t.deadline || ""}" />
+      </div>
+      <div style="margin-top:10px;"><label>Notes</label>
+        <textarea id="mt-notes">${escapeHtml(t.notes || "")}</textarea>
+      </div>
+      <div class="actions">
+        <button id="mt-cancel">Cancel</button>
+        <button class="primary" id="mt-save">Save</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.querySelector("#mt-cancel").addEventListener("click", () => modal.remove());
+  modal.querySelector("#mt-save").addEventListener("click", async () => {
+    t.title = modal.querySelector("#mt-title").value.trim();
+    t.category = modal.querySelector("#mt-category").value;
+    t.deadline = modal.querySelector("#mt-deadline").value || null;
+    t.notes = modal.querySelector("#mt-notes").value;
+    modal.remove();
+    await persist();
+    renderCurrentView();
+  });
+}
+
+function openNoteEditModal(id) {
+  const n = STATE.notes.find(x => x.id === id);
+  if (!n) return;
+  const modal = document.createElement("div");
+  modal.className = "modal-bg";
+  modal.innerHTML = `
+    <div class="modal">
+      <h2>Edit Note</h2>
+      <label>Title</label>
+      <input type="text" id="mn-title" value="${escapeHtml(n.title)}" />
+      <div style="margin-top:10px;"><label>Body</label>
+        <textarea id="mn-body" class="notes-textarea">${escapeHtml(n.body || "")}</textarea>
+      </div>
+      <div class="actions">
+        <button id="mn-cancel">Cancel</button>
+        <button class="primary" id="mn-save">Save</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.querySelector("#mn-cancel").addEventListener("click", () => modal.remove());
+  modal.querySelector("#mn-save").addEventListener("click", async () => {
+    n.title = modal.querySelector("#mn-title").value.trim();
+    n.body = modal.querySelector("#mn-body").value;
+    n.updatedAt = new Date().toISOString();
+    modal.remove();
+    await persist();
+    renderCurrentView();
+  });
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+document.addEventListener("DOMContentLoaded", () => {
+  const isFirstTime = !loadCiphertext();
+  if (isFirstTime) {
+    document.getElementById("login-prompt").textContent = "Create a password for first use.";
+    document.getElementById("pw2-wrap").classList.remove("hidden");
+  }
+  document.getElementById("login-btn").addEventListener("click", attemptLogin);
+  document.getElementById("pw1").addEventListener("keydown", e => { if (e.key === "Enter") attemptLogin(); });
+  const pw2 = document.getElementById("pw2");
+  if (pw2) pw2.addEventListener("keydown", e => { if (e.key === "Enter") attemptLogin(); });
+
+  document.getElementById("lock-btn").addEventListener("click", lockApp);
+  document.getElementById("nav-settings-btn").addEventListener("click", () => navigateTo("settings"));
+});
+</script>
+</body>
+</html>
