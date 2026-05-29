@@ -7,6 +7,8 @@ author_profile: true
 
 ## Conference Presentations
 
+* "Stratified Sampling for Model-Assisted Estimation with Surrogate Outcomes" (Invited). New England Statistics Symposium, May 2026.
+
 * "Statistical Innovation with Text as Data in Causal Inference Contexts: Emerging Trends and Future Directions". Joint Statistical Meetings, Portland, OR. Aug. 2024.
 
 * "More power to you: Using machine learning to augment human coding for more efficient inference in text-based randomized trials" (Invited). American Causal Inference Conference, Seattle, WA. May 2024.
@@ -38,6 +40,8 @@ author_profile: true
 * "Matching with Text Data: An Experimental Evaluation of Methods for Matching Documents and of Measuring Match Quality". Annual Meeting of the Society for Political Methodology, Salt Lake City, UT. July 2018.
 
 ## Invited Talks & Panels
+
+* "Stratified Sampling for Model-Assisted Estimation with Surrogate Outcomes". Harvard IQSS Applied Statistics Seminar, Cambridge, MA. Mar. 2026.
 
 * Moderator for "From Theory to Practice: Navigating the Path to Actionable AI Solutions" panel. Bentley Global AI Summit, Waltham, MA. May 2024.
 
