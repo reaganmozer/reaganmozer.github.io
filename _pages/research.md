@@ -13,6 +13,8 @@ author_profile: true
 
 ## Under review
 
+* Ledley, F. D. and **Mozer, R.** (2026). Trends in NIH funding for pediatric research FY2020-FY2026. *JAMA Pediatrics* (Under review)
+
 * **Mozer, R.** (2026). PPI is the difference estimator: Recognizing the survey sampling roots of prediction-powered inference. [arXiv preprint arXiv:2603.19160](https://arxiv.org/abs/2603.19160)
 
 * **Mozer, R.**, Pashley, N. E., and Miratrix, L. (2026). Stratified sampling for model-assisted estimation with surrogate outcomes. [arXiv preprint arXiv:2602.12992](https://arxiv.org/abs/2602.12992)
