@@ -8,13 +8,13 @@ redirect_from:
   - /about.html
 ---
 
-Hi! I'm Reagan, an Associate Professor in the <a style='color: black;' href='https://www.bentley.edu/academics/departments/mathematical-sciences'>Department of Mathematical Sciences</a> at Bentley University and an affiliate of the <a style='color: black;' href='https://www.bentley.edu/centers/center-for-integration-science-and-industry'>Center for Integration of Science and Industry</a>. I'm a statistician and methodologist whose research focuses on the development and application of methods for causal inference with complex data, including text data, randomized experiments complicated by issues such as non-compliance, and observational studies with time-varying treatments. 
+Hi! I'm Reagan, an Associate Professor in the <a style='color: black;' href='https://www.bentley.edu/academics/departments/mathematical-sciences'>Department of Mathematical Sciences</a> and Director of the  <a style='color: black;' href='https://www.bentley.edu/centers/cads'>Center for Analytics and Data Science (CADS)</a> at Bentley University. I'm a statistician and methodologist whose research focuses on the development and application of methods for causal inference with complex data, including text data, randomized experiments complicated by issues such as non-compliance, and observational studies with time-varying treatments. 
 
 
 
 Research
 ------
-My research focuses on methodological problems related to causal inference in complex experiments and observational studies, particularly in settings where the covariates and/or outcomes of interest are defined by features or summary measures of text
+My research focuses on methodological problems related to causal inference in complex experiments and observational studies, particularly in settings where the covariates and/or outcomes of interest are defined by features or summary measures of text.
 
 Teaching
 ------
