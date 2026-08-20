@@ -7,8 +7,6 @@ author_profile: true
 
 ## Working papers / pre-prints
 
-* Bavli, H. J. and **Mozer, R.** The Evidence on Character Evidence in Jury Trials: Findings from a Randomized Controlled Trial. *Working paper*
-
 * Guo, G., Branson, Z., and **Mozer, R.** Doubly robust causal inference with text-based confounding: An application to gender disparities in online forums. *Working paper*
 
 * Hsin, L., Al-Adeimi, S., **Mozer, R.**, Miratrix, L., and Kim, Y. Improving Writing Without Teaching It: Impacts and Demographic Variation in Adolescents' Writing Following a Discussion-Based Academic Language Intervention. *Paper in progress*
@@ -17,9 +15,7 @@ author_profile: true
 
 * Ledley, F. D. and **Mozer, R.** (2026). Trends in NIH funding for pediatric research FY2020-FY2026. *JAMA Pediatrics* (Under review)
 
-* **Mozer, R.** (2026). PPI is the difference estimator: Recognizing the survey sampling roots of prediction-powered inference. [arXiv preprint arXiv:2603.19160](https://arxiv.org/abs/2603.19160)
-
-* **Mozer, R.**, Pashley, N. E., and Miratrix, L. (2026). Stratified sampling for model-assisted estimation with surrogate outcomes. [arXiv preprint arXiv:2602.12992](https://arxiv.org/abs/2602.12992)
+* **Mozer, R.**, Pashley, N. E., and Miratrix, L. (2026). Stratified sampling for model-assisted estimation with surrogate outcomes. *Political Analysis* (Revise and resubmit). [arXiv preprint arXiv:2602.12992](https://arxiv.org/abs/2602.12992)
 
 * Rupcic, S., Jasuja, G. K., **Mozer, R.**, Xu, C., Anderson, E., Bokhour, B. G., Boudreau, J. H., DeLaughter, K. L., Douglas, J. H., Dryden, E., Gifford, A. L., Hyde, J., Tam, M. Z., Zeliadt, S. B., and Fix, G. M. (2025). A Retrospective Analysis of Person-Centered, Whole Health Use Among People Living with HIV. *Medical Care* (Under review)
 
@@ -28,6 +24,10 @@ author_profile: true
 * Kim, Y., **Mozer, R.**, Miratrix, L., and Al-Adeimi, S. ChatGPT vs. Linear Regression: Assessing the Efficacy and Accuracy of Large Language Models for Automated Essay Scoring. *International Journal of Artificial Intelligence in Education* (Under review). [EdWorkingPaper: 25-1335](https://edworkingpapers.com/sites/default/files/ai25-1335.pdf)
 
 ## Publications
+
+* Bavli, H. J. and **Mozer, R.** (Forthcoming). When Character Convicts. *George Washington Law Review*, Vol. 95 (2027)
+
+* **Mozer, R.** (Forthcoming). The Survey Sampling Roots of Prediction-Powered Inference: What's the Same, What's Different, and Why It Matters. *The American Statistician*. [arXiv preprint arXiv:2603.19160](https://arxiv.org/abs/2603.19160)
 
 * **Mozer, R.** and Miratrix, L. (2025). More power to you: Using machine learning to augment human coding for more efficient inference in text-based randomized trials. *Annals of Applied Statistics*, 19(1):440--464
 
