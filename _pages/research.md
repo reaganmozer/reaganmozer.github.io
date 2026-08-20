@@ -5,12 +5,6 @@ permalink: /research/
 author_profile: true
 ---
 
-## Working papers / pre-prints
-
-* Guo, G., Branson, Z., and **Mozer, R.** Doubly robust causal inference with text-based confounding: An application to gender disparities in online forums. *Working paper*
-
-* Hsin, L., Al-Adeimi, S., **Mozer, R.**, Miratrix, L., and Kim, Y. Improving Writing Without Teaching It: Impacts and Demographic Variation in Adolescents' Writing Following a Discussion-Based Academic Language Intervention. *Paper in progress*
-
 ## Under review
 
 * Ledley, F. D. and **Mozer, R.** (2026). Trends in NIH funding for pediatric research FY2020-FY2026. *JAMA Pediatrics* (Under review)
@@ -59,6 +53,12 @@ author_profile: true
 
 
 * **Mozer, R.**, Kessels, R., and Rubin, D. B. (2017). [Disentangling treatment and placebo effects in randomized experiments using principal stratification: an introduction.](https://link.springer.com/chapter/10.1007/978-3-319-77249-3_2) In *The Annual Meeting of the Psychometric Society*, pages 11--23. Springer
+
+## Working papers / pre-prints
+
+* Guo, G., Branson, Z., and **Mozer, R.** Doubly robust causal inference with text-based confounding: An application to gender disparities in online forums. *Working paper*
+
+* Hsin, L., Al-Adeimi, S., **Mozer, R.**, Miratrix, L., and Kim, Y. Improving Writing Without Teaching It: Impacts and Demographic Variation in Adolescents' Writing Following a Discussion-Based Academic Language Intervention. *Paper in progress*
 
 
 
