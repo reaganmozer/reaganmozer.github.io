@@ -19,7 +19,7 @@ author_profile: true
 
 ## Publications
 
-* Bavli, H. J. and **Mozer, R.** (Forthcoming). When Character Convicts. *George Washington Law Review*, Vol. 95 (2027)
+* Bavli, H. J. and **Mozer, R.** (Forthcoming). When Character Convicts. *George Washington Law Review*, Vol. 95 (2027). [SSRN preprint](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7316258)
 
 * **Mozer, R.** (Forthcoming). The Survey Sampling Roots of Prediction-Powered Inference: What's the Same, What's Different, and Why It Matters. *The American Statistician*. [arXiv preprint arXiv:2603.19160](https://arxiv.org/abs/2603.19160)
 
