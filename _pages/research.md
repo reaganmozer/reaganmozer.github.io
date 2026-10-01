@@ -7,13 +7,13 @@ author_profile: true
 
 ## Under review
 
-* Ledley, F. D. and **Mozer, R.** (2026). Trends in NIH funding for pediatric research FY2020-FY2026. *JAMA Pediatrics* (Under review)
+* Ledley, F. D. and **Mozer, R.** (2026). Trends in NIH funding for pediatric research FY2020-FY2026. *JAMA Health Forum* (Under review)
 
 * **Mozer, R.**, Pashley, N. E., and Miratrix, L. (2026). Stratified sampling for model-assisted estimation with surrogate outcomes. *Political Analysis* (Revise and resubmit). [arXiv preprint arXiv:2602.12992](https://arxiv.org/abs/2602.12992)
 
 * Rupcic, S., Jasuja, G. K., **Mozer, R.**, Xu, C., Anderson, E., Bokhour, B. G., Boudreau, J. H., DeLaughter, K. L., Douglas, J. H., Dryden, E., Gifford, A. L., Hyde, J., Tam, M. Z., Zeliadt, S. B., and Fix, G. M. (2025). A Retrospective Analysis of Person-Centered, Whole Health Use Among People Living with HIV. *Medical Care* (Under review)
 
-* **Mozer, R.**, Kaufman, A. R., Celi, L. A., and Miratrix, L. Leveraging text data for causal inference using electronic health records: Investigating the efficacy of transthoracic echocardiography for sepsis. *Journal of the American Statistical Association* (Under review). [arXiv preprint arXiv:2307.03687](https://arxiv.org/abs/2307.03687)
+* **Mozer, R.**, Kaufman, A. R., Celi, L. A., and Miratrix, L. Leveraging text data for causal inference using electronic health records: Investigating the efficacy of transthoracic echocardiography for sepsis. (Under review). [arXiv preprint arXiv:2307.03687](https://arxiv.org/abs/2307.03687)
 
 * Kim, Y., **Mozer, R.**, Miratrix, L., and Al-Adeimi, S. ChatGPT vs. Linear Regression: Assessing the Efficacy and Accuracy of Large Language Models for Automated Essay Scoring. *International Journal of Artificial Intelligence in Education* (Under review). [EdWorkingPaper: 25-1335](https://edworkingpapers.com/sites/default/files/ai25-1335.pdf)
 
